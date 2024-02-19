@@ -1,0 +1,136 @@
+{% extends 'track/base.html' %}
+{% load humanize %}
+
+
+{% block content %}
+<div class="container my-5">
+    <h3 class="mb-3">Expense</h3>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.name }}</td>
+                    <td>${{ expense.amount|intcomma }}</td>
+                    <td>{{ expense.category }}</td>
+                    <td>{{ expense.date }}</td>
+                    <td><a class="add" href="{% url 'edit' expense.id %}">
+                            <i class="bi bi-pencil-square"></i></a>
+                    </td>
+                    <td><a class='add' href="{% url 'delete' expense.id %}">
+                            <i class="bi bi-x-circle"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>${{ total_expenses.amount__sum|intcomma}}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="row my-5">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <b>Last 365 Days</b>
+                </div>
+                <div class="card-body">
+                    ${{ yearly_sum.amount__sum|intcomma}}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <b>Last 30 Days</b>
+                </div>
+                <div class="card-body">
+                    ${{ monthly_sum.amount__sum|intcomma }}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <b>Last 7 Days</b>
+                </div>
+                <div class="card-body">
+                    ${{ weekly_sum.amount__sum|intcomma }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <b>Categorical Expenses</b>
+                </div>
+                <div id="cat-sum" class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Category</th>
+                                <th scope="col">Sum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in categorical_sum %}
+                            <tr>
+                                <td>
+                                    <span>{{ item.category }}</span>
+                                </td>
+                                <td>
+                                    <span>${{ item.sum }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+        </div>
+    </div>
+    <div class="mt-5">
+        <h3 class="mb-3">Add Expense</h3>
+        <form class="row g-3" method="POST">
+            {% csrf_token %}
+            <div class="col-8">
+                <label class="form-label">Name</label>
+                {{ expense_form.name }}
+            </div>
+            <div class="col-4">
+                <label class="form-label">Amount</label>
+                {{ expense_form.amount }}
+            </div>
+            <div class="col-12">
+                <label class="form-label">Category</label>
+                {{ expense_form.category }}
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-primary">Add Expense</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

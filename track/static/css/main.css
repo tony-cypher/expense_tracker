@@ -1,0 +1,8 @@
+.table .add {
+    text-decoration: none;
+    color: black;
+}
+
+.add:hover {
+    color: blue;
+}
